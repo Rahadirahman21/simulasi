@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <ul
+      class="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box w-full"
+    >
+      <li>
+        <a href="kelolauser.html" class="text-center w-40 ms-10">Kelola User</a>
+      </li>
+      <li>
+        <a href="kelolalaporan.html" class="text-center w-40">Kelola Laporan</a>
+      </li>
+      <li>
+        <a href="admin.html" class="text-center w-40">Log Activity</a>
+      </li>
+      <li>
+        <a
+          href="index.html"
+          class="text-center w-40 right flex ms-205 btn bg-red-500 text-white"
+          >Logout</a
+        >
+      </li>
+    </ul>
+    <div>
+      <h1 class="my-5 text-4xl text-blue-500 font-bold text-center">
+        KELOLA USER
+      </h1>
+      
+      
+        <div
+          class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 mb-10 mt-20"
+        >
+          <table class="table">
+            <tr>
+              <th><h1>Tipe User</h1></th>
+              <th><h1>Nama</h1></th>
+              <th><h1>Telepon</h1></th>
+              <th><h1>Alamat</h1></th>
+              <th><h1>Username</h1></th>
+              <th><h1>password</h1></th>
+            </tr>
+            <tr>
+              <td>
+                <select name="" id="tipe_user" class="input w-40">
+                  <option value="">Pilih</option>
+                  <option value="admin">Admin</option>
+                  <option value="gudang">gudang</option>
+                  <option value="kasir">Kasir</option>
+                </select>
+              </td>
+              <td>
+                <input type="text" name="" id="nama" class="input w-40" />
+              </td>
+              <td>
+                <input type="text" name="" id="telepon" class="input w-40" />
+              </td>
+              <td>
+                <input type="text" name="" id="alamat" class="input w-40" />
+              </td>
+              <td>
+                <input type="text" name="" id="username" class="input w-40" />
+              </td>
+              <td>
+                <input
+                  type="password"
+                  name=""
+                  id="password"
+                  class="input w-50"
+                />
+              </td>
+              <td><button onclick="addUser()" class="btn bg-green-500 text-white">Tambah</button>
+            <button onclick="updateUser()" class="btn bg-yellow-500 text-white">Update</button></td>
+
+              <input type="hidden" id="userId" />
+            </tr>
+            
+          </table>
+        </div>
+        <div
+          class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100"
+        >
+          <table class="table" id="table">
+            <!-- head -->
+            <thead>
+              <tr  onclik="addUser()">
+                <th></th>
+                <th>Tipe User</th>
+                <th>Nama User</th>
+                <th>Alamat</th>
+                <th>Telepon</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const supabaseUrl = "https://sracjpyrnpatfgiugqaa.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyYWNqcHlybnBhdGZnaXVncWFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NTY0NjIsImV4cCI6MjA2MTAzMjQ2Mn0.Wq7BALABhNUIeIGkUsCGX0bHsoPOqd5IUArXVkWQG9o";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      async function addUser() {
+        const tipe_user = document.getElementById("tipe_user").value;
+        const nama = document.getElementById("nama").value;
+        const telepon = document.getElementById("telepon").value;
+        const alamat = document.getElementById("alamat").value;
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        const { data, error } = await supabase.from("tbl_user").insert([
+          {
+            tipe_user: tipe_user,
+            nama: nama,
+            telepon: telepon,
+            alamat: alamat,
+            username: username,
+            password: password,
+          },
+        ]);
+        loadUser();
+      }
+      async function editUser(user) {
+        document.getElementById("userId").value = user.id_user;
+        document.getElementById("tipe_user").value = user.tipe_user;
+        document.getElementById("nama").value = user.nama;
+        document.getElementById("telepon").value = user.telepon;
+        document.getElementById("alamat").value = user.alamat;
+        document.getElementById("username").value = user.username;
+        document.getElementById("password").value = user.password;
+      }
+      async function updateUser() {
+        const userId = document.getElementById("userId").value;
+        const tipe_user = document.getElementById("tipe_user").value;
+        const nama = document.getElementById("nama").value;
+        const telepon = document.getElementById("telepon").value;
+        const alamat = document.getElementById("alamat").value;
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        const { data, error } = await supabase
+          .from("tbl_user")
+          .update({
+            username: username,
+            password: password,
+            tipe_user: tipe_user,
+            nama: nama,
+            telepon: telepon,
+            alamat: alamat,
+          })
+          .eq("id_user", userId);
+
+        loadUser();
+      }
+
+      async function deleteUser(userId) {
+        const { data, error } = await supabase
+          .from("tbl_log")
+          .delete()
+          .eq("id_user", userId);
+        await supabase.from("tbl_user").delete().eq("id_user", userId);
+        loadUser();
+      }
+
+      async function loadUser() {
+        const { data, error } = await supabase.from("tbl_user").select("*");
+
+        const table = document.getElementById("table");
+        table.innerHTML = `
+          <tr>
+                  <th></th>
+                  <th>Tipe User</th>
+                  <th>Nama User</th>
+                  <th>Alamat</th>
+                  <th>Telepon</th>
+                  <th>Aksi</th>
+                </tr>
+          `;
+
+        data.forEach((user, index) => {
+          row = document.createElement("tr");
+          row.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${user.tipe_user}</td>
+              <td>${user.nama}</td>
+              <td>${user.alamat}</td>
+              <td>${user.telepon}</td>
+            <button type="button" onclick='editUser(${JSON.stringify(user)})' class="ms-2 mb-2 rounded bg-yellow-500 w-20 h-8 text-white">Edit</button>
+            <button type="button" onclick='deleteUser(${user.id_user})' class="ms-2  rounded bg-red-500 w-20 h-8 text-white">Hapus</button>
+
+              `;
+          table.appendChild(row);
+        });
+      }
+      const hiddenIdInput = document.createElement("input");
+      hiddenIdInput.type = "hidden";
+      hiddenIdInput.id = "userId";
+      document.body.appendChild(hiddenIdInput);
+      loadUser();
+    </script>
+  </body>
+</html>

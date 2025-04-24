@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <div class="ms-140 mt-30">
+      <h1 class="text-blue-500 text-5xl font-bold">Sing In</h1>
+      <h1 class="text-blue-500 mt-5">enter your username end password</h1>
+      <h1 class="text-blue-500 mt-5">Username</h1>
+      <input type="text" id="username" class="input w-100" />
+      <h1 class="text-blue-500 mt-5">Password</h1>
+      <input type="password" id="password" class="input w-100" />
+    </div>
+    <button
+      onclick="login()"
+      class="btn ms-140 mt-10 bg-blue-500 text-white w-50"
+    >
+      Login
+    </button>
+    <script>
+      const supabaseUrl = "https://sracjpyrnpatfgiugqaa.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyYWNqcHlybnBhdGZnaXVncWFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NTY0NjIsImV4cCI6MjA2MTAzMjQ2Mn0.Wq7BALABhNUIeIGkUsCGX0bHsoPOqd5IUArXVkWQG9o";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const { data, error } = await supabase
+          .from("tbl_user")
+          .select("*")
+          .eq("username", username)
+          .eq("password", password)
+          .single();
+        if (data.tipe_user == "admin") {
+          window.location.href = "admin.html";
+        } else if (data.tipe_user == "gudang") {
+          window.location.href = "gudang.html";
+        } else if (data.tipe_user == "kasir") {
+          window.location.href = "kasir.html";
+        }
+      }
+    </script>
+  </body>
+</html>

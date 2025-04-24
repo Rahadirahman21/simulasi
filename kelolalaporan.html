@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <ul
+      class="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box w-full"
+    >
+      <li>
+        <a href="kelolauser.html" class="text-center w-40 ms-10">Kelola User</a>
+      </li>
+      <li>
+        <a href="kelolalaporan.html" class="text-center w-40">Kelola Laporan</a>
+      </li>
+      <li>
+        <a href="admin.html" class="text-center w-40">Log Activity</a>
+      </li>
+      <li>
+        <a
+          href="index.html"
+          class="text-center w-40 right flex ms-205 btn bg-red-500 text-white"
+          >Logout</a
+        >
+      </li>
+    </ul>
+    <div>
+      <h1 class="my-5 text-4xl text-blue-500 font-bold text-center">
+        KELOLA LAPORAN
+      </h1>
+
+      <div
+        class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100"
+      >
+        <table class="table" id="table">
+          <!-- head -->
+          <thead>
+            <tr>
+              <th>NO Transaksi</th>
+              <th>Tanggal Transaksi</th>
+              <th>Total Penjualan</th>
+              <th>Nama Kasir</th>
+              <th>Nama Pelanggan</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      const supabaseUrl = "https://sracjpyrnpatfgiugqaa.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyYWNqcHlybnBhdGZnaXVncWFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NTY0NjIsImV4cCI6MjA2MTAzMjQ2Mn0.Wq7BALABhNUIeIGkUsCGX0bHsoPOqd5IUArXVkWQG9o";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      async function loadS() {
+        const { data, error } = await supabase
+          .from("tbl_transaksi")
+          .select("*,tbl_user(*),tbl_pelanggan(*),tbl_barang(*)");
+
+        const table = document.getElementById("table");
+        table.innerHTML = `
+        <tr>
+              <th>NO Transaksi</th>
+              <th>Tanggal Transaksi</th>
+              <th>Total Penjualan</th>
+              <th>Nama Kasir</th>
+              <th>Nama Pelanggan</th>
+            </tr>
+          `;
+
+        data.forEach((user, index) => {
+          row = document.createElement("tr");
+          row.innerHTML = `
+              <td>${user.no_transaksi}</td>
+              <td>${user.tgl_transaksi}</td>
+              <td>${user.total_bayar}</td>
+              <td>${user.nama_kasir}</td>
+              <td>${user.tbl_pelanggan.nama}</td>
+
+              `;
+          table.appendChild(row);
+        });
+      }
+      loadS();
+    </script>
+  </body>
+</html>
