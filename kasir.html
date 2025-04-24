@@ -26,7 +26,7 @@
     </ul>
     <div>
       <h1 class="my-5 text-4xl text-blue-500 font-bold text-center">
-        FORM TRANSAKSI
+        KELOLA BARANG
       </h1>
       
       
@@ -35,39 +35,41 @@
         >
           <table class="table">
             <tr>
-              <th><h1>Kode Barang</h1></th>
-              <th><h1>Jumlah Barang</h1></th>
-              <th><h1>Nama Barang</h1></th>
-              <th><h1>Satuan</h1></th>
-              <th><h1>Expired Date</h1></th>
-              <th><h1>Harga Barang</h1></th>
+              <th><h1>Pilih Barang</h1></th>
+              <th><h1>Telepon</h1></th>
+              <th><h1>Nama Pelanggan</h1></th>
+              <th><h1>Harga Satuan</h1></th>
+              <th><h1>Quantitas</h1></th>
+              <th><h1>Total Harga</h1></th>
             </tr>
             <tr>
               <td>
-                  <input type="text" name="" id="kode_barang" class="input w-40" />
+                <select class="select" id="select-c">
+                    <option value="pilih">pilih</option>
+                </select>
                 
+              </td>
+              <td>
+                <input type="text" name="" id="telepon" class="input w-40" />
+              </td>
+              <td>
+                <input type="text" name="" id="nama" class="input w-40" />
+              </td>
+              <td>
+                <input type="text" name="" id="harga_satuan" class="input w-40" />
               </td>
               <td>
                 <input type="text" name="" id="jumlah_barang" class="input w-40" />
               </td>
               <td>
-                <input type="text" name="" id="nama_barang" class="input w-40" />
-              </td>
-              <td>
-                <input type="text" name="" id="satuan" class="input w-40" />
-              </td>
-              <td>
-                <input type="date" name="" id="expired_date" class="input w-40" />
-              </td>
-              <td>
                 <input
                   type="number"
                   name=""
-                  id="harga_satuan"
+                  id="total"
                   class="input w-50"
                 />
               </td>
-              <td><button onclick="addUser()" class="btn bg-green-500 text-white">Tambah</button>
+              <td><button onclick="addKeranjang()" class="btn bg-green-500 text-white">Tambah</button>
             <button onclick="updateUser()" class="btn bg-yellow-500 text-white">Update</button></td>
 
               <input type="hidden" id="userId" />
@@ -76,23 +78,23 @@
           </table>
         </div>
         <div
-          class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100"
+          class=" mt-5 overflow-x-auto rounded-box border border-base-content/5 bg-base-100"
         >
           <table class="table" id="table">
             <!-- head -->
             <thead>
               <tr>
-                <th>ID Barang</th>
+                <th>No Transaksi</th>
                 <th>Kode Barang</th>
                 <th>Nama Barang</th>
-                <th>Expired Date</th>
                 <th>Qty</th>
                 <th>Satuan</th>
                 <th>Harga Satuan</th>
-                <th>Aksi</th>
               </tr>
             </thead>
-            <tbody></tbody>
+            <tbody id="content">
+
+            </tbody>
           </table>
         </div>
       </div>
@@ -103,105 +105,119 @@
       const supabaseKey =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyYWNqcHlybnBhdGZnaXVncWFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NTY0NjIsImV4cCI6MjA2MTAzMjQ2Mn0.Wq7BALABhNUIeIGkUsCGX0bHsoPOqd5IUArXVkWQG9o";
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+      const telepon = document.getElementById("telepon")
+      const nama = document.getElementById("nama")
+      const harga = document.getElementById("harga_satuan")
+      const qty = document.getElementById("jumlah_barang")
+      const total = document.getElementById("total")
+      const kode_barang = document.getElementById("select-c")
+      const content = document.getElementById("content")
 
-      async function addUser() {
-        const kode_barang = document.getElementById("kode_barang").value;
-        const nama_barang = document.getElementById("nama_barang").value;
-        const expired_date = document.getElementById("expired_date").value;
-        const jumlah_barang = document.getElementById("jumlah_barang").value;
-        const satuan = document.getElementById("satuan").value;
-        const harga_satuan = document.getElementById("harga_satuan").value
-
-        const { data, error } = await supabase.from("tbl_barang").insert([
-          {
-            kode_barang: kode_barang,
-            nama_barang: nama_barang,
-            expired_date: expired_date,
-            jumlah_barang: jumlah_barang,
-            satuan: satuan,
-            harga_satuan: harga_satuan,
-          },
-        ]);
-        loadUser();
+      const fetchAllBarang = async () => {
+        const {data} = await supabase.from("tbl_barang").select("*");
+        console.log(data)
+        data.map((d) => {
+            const opt = document.createElement("option");
+            opt.innerHTML = d.kode_barang
+            kode_barang.append(opt)
+        })
       }
-      async function editUser(user) {
-        document.getElementById("userId").value = user.id_barang;
-        document.getElementById("kode_barang").value = user.kode_barang;
-        document.getElementById("nama_barang").value = user.nama_barang;
-        document.getElementById("expired_date").value = user.expired_date;
-        document.getElementById("jumlah_barang").value = user.jumlah_barang;
-        document.getElementById("satuan").value = user.satuan;
-        document.getElementById("harga_satuan").value = user.harga_satuan;
-      }
-      async function updateUser() {
-        const userId = document.getElementById("userId").value;
-        const kode_barang = document.getElementById("kode_barang").value;
-        const nama_barang = document.getElementById("nama_barang").value;
-        const expired_date = document.getElementById("expired_date").value;
-        const jumlah_barang = document.getElementById("jumlah_barang").value;
-        const satuan = document.getElementById("satuan").value;
-        const harga_satuan = document.getElementById("harga_satuan").value
 
+      fetchAllBarang()
+      
+      
+      
+      
+
+      
+
+      const data = []
+
+      const addKeranjang = () => {
+        const inv = `INV-${Date.now()}`
+        const teleponValue = telepon.value
+        const namaValue = nama.value
+        const hargaValue = harga.value
+        const qtyValue = qty.value
+        const totalValue = total.value
+        const kode_barangValue = kode_barang.value
+        const newItems = {
+            no_transaksi: inv,
+            kode_barang: kode_barangValue,
+            nama_barang: "uhasfg",
+            qty: qtyValue,
+            satuan: "pcs",
+            harga_total : teleponValue,
+
+        }
+        const dataUpdate = [...data,newItems]
+        data.push(newItems)
+        fetchAllData()
+      }
+      const fetchAllData = () => {
+          data.forEach((d) => {
+            console.log("jalan")
+            const tr = document.createElement("tr")
+            tr.innerHTML = `
+            <td>${d.no_transaksi}</td>
+            <td>${d.kode_barang}</td>
+            <td>${d.nama_barang}</td>
+            <td>${d.qty}</td>
+            <td>${d.satuan}</td>
+            <td>${d.harga_total}</td>
+
+            `
+            content.append(tr)
+        })
+      }
+
+
+      kode_barang.addEventListener("change", async function () {
         const { data, error } = await supabase
           .from("tbl_barang")
-          .update({
-            kode_barang: kode_barang,
-            nama_barang: nama_barang,
-            expired_date: expired_date,
-            jumlah_barang: jumlah_barang,
-            satuan: satuan,
-            harga_satuan: harga_satuan,
-          })
-          .eq("id_barang", userId);
-loadUser();
-        
-      }
+          .select("harga_satuan")
+          .eq("kode_barang", kode_barang.value)
+          .single();
+        console.log(data);
+        harga.value = `${data.harga_satuan}`;
+      });
 
-      async function deleteUser(userId) {
-        const { data, error } = 
-        await supabase.from("tbl_barang").delete().eq("id_barang", userId);
-        loadUser();
-      }
-
-      async function loadUser() {
+      qty.addEventListener("change", async function () {
+        console.log(qty);
+        total.value = qty.value * harga.value;
+        console.log(qty.value);
+        console.log(harga.value);
+      });
+      async function dataBarang() {
         const { data, error } = await supabase.from("tbl_barang").select("*");
-
-        const table = document.getElementById("table");
-        table.innerHTML = `
-          <tr>
-                <th>ID Barang</th>
-                <th>Kode Barang</th>
-                <th>Nama Barang</th>
-                <th>Expired Date</th>
-                <th>Qty</th>
-                <th>Satuan</th>
-                <th>Harga Satuan</th>
-                <th>Aksi</th>
-              </tr>
-          `;
-
-        data.forEach((user, index) => {
-          row = document.createElement("tr");
-          row.innerHTML = `
-              <td>${index + 1}</td>
-              <td>${user.kode_barang}</td>
-              <td>${user.nama_barang}</td>
-              <td>${user.expired_date}</td>
-              <td>${user.jumlah_barang}</td>
-              <td>${user.satuan}</td>
-              <td>${user.harga_satuan}</td>
-            <button type="button" onclick='editUser(${JSON.stringify(user)})' class="ms-2 mb-2 rounded bg-yellow-500 w-20 h-8 text-white">Edit</button>
-            <button type="button" onclick='deleteUser(${user.id_barang})' class="ms-2  rounded bg-red-500 w-20 h-8 text-white">Hapus</button>
-
-              `;
-          table.appendChild(row);
+        console.log(data);
+        console.log(kode_barang);
+        data.forEach((data) => {
+          option = document.createElement("option");
+          option.innerHTML = `
+            <option value="${data.kode_barang}">${data.kode_barang}</option>
+            `;
+          kode_barang.appendChild(option);
         });
       }
-      const hiddenIdInput = document.createElement("input");
-      hiddenIdInput.type = "hidden";
-      hiddenIdInput.id = "userId";
-      document.body.appendChild(hiddenIdInput);
-      loadUser();
+      dataBarang()
+
+      telepon.addEventListener("change", async function () {
+        const teleponValue = telepon.value;
+        const { data, error } = await supabase
+          .from("tbl_pelanggan")
+          .select("*")
+          .eq("telepon", teleponValue)
+          .single();
+        if (data || !error) {
+          nama.value = data.nama;
+          nama.disabled = true;
+        } else {
+          nama.disabled = false;
+          nama.value = "";
+        }
+      });
+      
     </script>
   </body>
 </html>
